@@ -11,20 +11,17 @@ function SearchBar({ onSearch }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex w-full max-w-md gap-3"
-    >
+    <form onSubmit={handleSubmit}
+      className="flex w-full max-w-md gap-3">
       <input
         type="text"
         placeholder="Search city..."
         value={city}
         onChange={(e) => setCity(e.target.value)}
         className="flex-1 px-5 py-3 rounded-2xl 
-                   bg-white/70 dark:bg-white/10 backdrop-blur-lg
-                   border border-white/30
-                   text-gray-800 dark:text-white 
-                   placeholder-gray-500 dark:placeholder-gray-400
+                   bg-white/10 backdrop-blur-lg
+                   border border-white/20
+                   text-white placeholder-gray-400
                    focus:outline-none focus:ring-2 
                    focus:ring-blue-500 transition"
       />
