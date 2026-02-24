@@ -8,15 +8,17 @@ import {
   WiThunderstorm,
 } from "react-icons/wi";
 
-function getWeatherIcon(description) {
-  const desc = description.toLowerCase();
-
-  if (desc.includes("clear")) return <WiDaySunny size={60} className="text-yellow-400 mx-auto" />;
-  if (desc.includes("rain")) return <WiRain size={60} className="text-blue-400 mx-auto" />;
-  if (desc.includes("cloud")) return <WiCloud size={60} className="text-gray-300 mx-auto" />;
-  if (desc.includes("snow")) return <WiSnow size={60} className="text-cyan-300 mx-auto" />;
-  if (desc.includes("thunder")) return <WiThunderstorm size={60} className="text-purple-400 mx-auto" />;
-  if (desc.includes("haze") || desc.includes("mist") || desc.includes("fog"))
+function getWeatherIcon(iconCode = "") {
+  if (iconCode.includes("01")) return <WiDaySunny size={60} className="text-yellow-400 mx-auto" />;
+  if (iconCode.includes("09") || iconCode.includes("10"))
+    return <WiRain size={60} className="text-blue-400 mx-auto" />;
+  if (iconCode.includes("02") || iconCode.includes("03") || iconCode.includes("04"))
+    return <WiCloud size={60} className="text-gray-300 mx-auto" />;
+  if (iconCode.includes("13"))
+    return <WiSnow size={60} className="text-cyan-300 mx-auto" />;
+  if (iconCode.includes("11"))
+    return <WiThunderstorm size={60} className="text-purple-400 mx-auto" />;
+  if (iconCode.includes("50"))
     return <WiFog size={60} className="text-gray-400 mx-auto" />;
 
   return <WiDaySunny size={60} className="text-yellow-400 mx-auto" />;
@@ -46,7 +48,7 @@ function Forecast({ forecast }) {
           >
             <p className="font-medium">{day.date}</p>
 
-            {getWeatherIcon(day.description)}
+            {getWeatherIcon(day.icon)}
 
             <p className="font-bold text-lg">
               {Math.round(day.temp)}°C

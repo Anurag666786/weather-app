@@ -8,7 +8,7 @@ import {
   WiThunderstorm,
 } from "react-icons/wi";
 
-function getWeatherIcon(description) {
+function getWeatherIcon(description = "") {
   const desc = description.toLowerCase();
 
   if (desc.includes("clear")) return <WiDaySunny size={100} className="text-yellow-400 mx-auto" />;
@@ -44,7 +44,7 @@ function WeatherCard({ data }) {
           animate={{ rotate: [0, 10, -10, 0] }}
           transition={{ repeat: Infinity, duration: 4 }}
         >
-          {getWeatherIcon(data.description)}
+          {getWeatherIcon(data.description || "")}
         </motion.div>
 
         <p className="text-7xl font-extrabold tracking-tight">
