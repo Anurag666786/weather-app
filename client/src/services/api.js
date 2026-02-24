@@ -1,4 +1,4 @@
-const BASE_URL = "/api/weather";  // ✅ using proxy
+const BASE_URL = "https://weather-app-08x3.onrender.com/api/weather";
 
 export const fetchWeather = async (city) => {
   const response = await fetch(`${BASE_URL}?city=${encodeURIComponent(city)}`);
