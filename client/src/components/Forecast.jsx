@@ -1,4 +1,26 @@
 import { motion } from "framer-motion";
+import {
+  WiDaySunny,
+  WiRain,
+  WiCloud,
+  WiSnow,
+  WiFog,
+  WiThunderstorm,
+} from "react-icons/wi";
+
+function getWeatherIcon(description) {
+  const desc = description.toLowerCase();
+
+  if (desc.includes("clear")) return <WiDaySunny size={60} className="text-yellow-400 mx-auto" />;
+  if (desc.includes("rain")) return <WiRain size={60} className="text-blue-400 mx-auto" />;
+  if (desc.includes("cloud")) return <WiCloud size={60} className="text-gray-300 mx-auto" />;
+  if (desc.includes("snow")) return <WiSnow size={60} className="text-cyan-300 mx-auto" />;
+  if (desc.includes("thunder")) return <WiThunderstorm size={60} className="text-purple-400 mx-auto" />;
+  if (desc.includes("haze") || desc.includes("mist") || desc.includes("fog"))
+    return <WiFog size={60} className="text-gray-400 mx-auto" />;
+
+  return <WiDaySunny size={60} className="text-yellow-400 mx-auto" />;
+}
 
 function Forecast({ forecast }) {
   if (!forecast) return null;
@@ -18,14 +40,14 @@ function Forecast({ forecast }) {
         {forecast.map((day, index) => (
           <div
             key={index}
-            className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-4 text-center text-white hover:-translate-y-2 transition duration-300"
+            className="bg-white/20 backdrop-blur-lg border border-white/30 
+                       rounded-2xl p-4 text-center text-white 
+                       hover:-translate-y-2 transition duration-300"
           >
             <p className="font-medium">{day.date}</p>
-            <img
-              src={`https://openweathermap.org/img/wn/${day.icon}.png`}
-              alt=""
-              className="mx-auto"
-            />
+
+            {getWeatherIcon(day.description)}
+
             <p className="font-bold text-lg">
               {Math.round(day.temp)}°C
             </p>
