@@ -31,7 +31,7 @@ function Home() {
     <div className="min-h-screen flex flex-col items-center px-4 py-12">
 
       <h1 className="text-white text-4xl font-bold mb-10 tracking-tight">
-        Global Weather
+        🌐Global Weather
       </h1>
 
       <SearchBar onSearch={handleSearch} />
