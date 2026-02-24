@@ -6,7 +6,7 @@ function Navbar() {
           🌍 Global Weather
         </h1>
         <p className="text-sm text-gray-300">
-          Professional Weather Tracking
+          Developed by Anurag
         </p>
       </div>
     </nav>
