@@ -7,7 +7,18 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+// ✅ CORS configuration
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173", // local dev (Vite default)
+      "https://weather-7jo18igzs-arya-tactical-technologies-projects.vercel.app" // your Vercel frontend
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 connectDB();
