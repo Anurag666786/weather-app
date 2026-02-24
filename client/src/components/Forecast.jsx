@@ -9,17 +9,18 @@ import {
 } from "react-icons/wi";
 
 function getWeatherIcon(iconCode = "") {
-  if (iconCode.includes("01")) return <WiDaySunny size={60} className="text-yellow-400 mx-auto" />;
+  if (iconCode.includes("01"))
+    return <WiDaySunny size={60} className="text-yellow-400 mx-auto" />;
   if (iconCode.includes("09") || iconCode.includes("10"))
     return <WiRain size={60} className="text-blue-400 mx-auto" />;
   if (iconCode.includes("02") || iconCode.includes("03") || iconCode.includes("04"))
-    return <WiCloud size={60} className="text-gray-300 mx-auto" />;
+    return <WiCloud size={60} className="text-gray-400 mx-auto" />;
   if (iconCode.includes("13"))
-    return <WiSnow size={60} className="text-cyan-300 mx-auto" />;
+    return <WiSnow size={60} className="text-cyan-400 mx-auto" />;
   if (iconCode.includes("11"))
     return <WiThunderstorm size={60} className="text-purple-400 mx-auto" />;
   if (iconCode.includes("50"))
-    return <WiFog size={60} className="text-gray-400 mx-auto" />;
+    return <WiFog size={60} className="text-gray-500 mx-auto" />;
 
   return <WiDaySunny size={60} className="text-yellow-400 mx-auto" />;
 }
@@ -34,7 +35,7 @@ function Forecast({ forecast }) {
       transition={{ duration: 0.6 }}
       className="mt-10 w-full max-w-4xl"
     >
-      <h3 className="text-white text-2xl font-semibold mb-6 text-center">
+      <h3 className="text-gray-800 dark:text-white text-2xl font-semibold mb-6 text-center">
         5-Day Forecast
       </h3>
 
@@ -42,8 +43,9 @@ function Forecast({ forecast }) {
         {forecast.map((day, index) => (
           <div
             key={index}
-            className="bg-white/20 backdrop-blur-lg border border-white/30 
-                       rounded-2xl p-4 text-center text-white 
+            className="bg-white/70 dark:bg-white/10 backdrop-blur-lg border border-white/30 
+                       rounded-2xl p-4 text-center 
+                       text-gray-800 dark:text-white 
                        hover:-translate-y-2 transition duration-300"
           >
             <p className="font-medium">{day.date}</p>
@@ -52,6 +54,10 @@ function Forecast({ forecast }) {
 
             <p className="font-bold text-lg">
               {Math.round(day.temp)}°C
+            </p>
+
+            <p className="text-sm mt-2">
+              🌧 {day.rainChance}%
             </p>
           </div>
         ))}

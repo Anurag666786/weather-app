@@ -6,7 +6,7 @@ import Forecast from "../components/Forecast";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 import { fetchWeather, fetchForecast } from "../services/api";
 
-function Home() {
+function Home({ theme, setTheme }) {
   const [weather, setWeather] = useState(null);
   const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -33,9 +33,13 @@ function Home() {
 
   return (
     <>
-      <Navbar />
+      <Navbar theme={theme} setTheme={setTheme} />
 
-      <div className="min-h-screen flex flex-col items-center px-4 py-12">
+      <div className="min-h-screen flex flex-col items-center px-4 py-12
+                      bg-gradient-to-br from-blue-400 to-blue-700
+                      dark:from-gray-900 dark:to-gray-800
+                      transition-colors duration-500">
+
         <SearchBar onSearch={handleSearch} />
 
         {loading && <LoadingSkeleton />}

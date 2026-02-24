@@ -90,7 +90,6 @@ const getForecastByCity = async (req, res) => {
 
     const forecastList = response.data.list;
 
-    // Pick one forecast per day (every 8th item = 24 hours)
     const dailyForecast = forecastList
       .filter((_, index) => index % 8 === 0)
       .slice(0, 5)
@@ -100,6 +99,7 @@ const getForecastByCity = async (req, res) => {
         }),
         temp: item.main.temp,
         icon: item.weather[0].icon,
+        rainChance: Math.round(item.pop * 100), // 🌧 Added
       }));
 
     cache.set(cacheKey, dailyForecast, 600);
