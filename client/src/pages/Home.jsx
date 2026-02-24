@@ -1,53 +1,56 @@
 import { useState } from "react";
+import Navbar from "../components/Navbar";
 import SearchBar from "../components/SearchBar";
 import WeatherCard from "../components/WeatherCard";
+import Forecast from "../components/Forecast";
 import LoadingSkeleton from "../components/LoadingSkeleton";
-import { fetchWeather } from "../services/api";
+import { fetchWeather, fetchForecast } from "../services/api";
 
 function Home() {
   const [weather, setWeather] = useState(null);
+  const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // ✅ added error state
+  const [error, setError] = useState(null);
 
   const handleSearch = async (city) => {
     try {
       setLoading(true);
-      setError(null);        // ✅ clear old errors
-      setWeather(null);      // ✅ clear old weather
-
-      const data = await fetchWeather(city);
-
-      setWeather(data);
-      setLoading(false);
-
-    } catch (err) {
+      setError(null);
       setWeather(null);
-      setError(err.message);  // ✅ store error message
+      setForecast(null);
+
+      const weatherData = await fetchWeather(city);
+      const forecastData = await fetchForecast(city);
+
+      setWeather(weatherData);
+      setForecast(forecastData);
+    } catch (err) {
+      setError(err.message);
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center px-4 py-12">
+    <>
+      <Navbar />
 
-      <h1 className="text-white text-4xl font-bold mb-10 tracking-tight">
-        🌐Global Weather
-      </h1>
+      <div className="min-h-screen flex flex-col items-center px-4 py-12">
+        <SearchBar onSearch={handleSearch} />
 
-      <SearchBar onSearch={handleSearch} />
+        {loading && <LoadingSkeleton />}
 
-      {loading && <LoadingSkeleton />}
+        {!loading && error && (
+          <p className="text-red-400 mt-6 text-lg font-medium">
+            {error}
+          </p>
+        )}
 
-      {/* ✅ Show error message */}
-      {!loading && error && (
-        <p className="text-red-400 mt-6 text-lg font-medium">
-          {error}
-        </p>
-      )}
+        {!loading && weather && <WeatherCard data={weather} />}
 
-      {!loading && weather && <WeatherCard data={weather} />}
-
-    </div>
+        {!loading && forecast && <Forecast forecast={forecast} />}
+      </div>
+    </>
   );
 }
 
