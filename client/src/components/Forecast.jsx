@@ -9,10 +9,15 @@ import {
 } from "react-icons/wi";
 
 function getWeatherIcon(iconCode = "") {
-  if (iconCode.includes("01")) return <WiDaySunny size={60} className="text-yellow-400 mx-auto" />;
+  if (iconCode.includes("01"))
+    return <WiDaySunny size={60} className="text-yellow-400 mx-auto" />;
   if (iconCode.includes("09") || iconCode.includes("10"))
     return <WiRain size={60} className="text-blue-400 mx-auto" />;
-  if (iconCode.includes("02") || iconCode.includes("03") || iconCode.includes("04"))
+  if (
+    iconCode.includes("02") ||
+    iconCode.includes("03") ||
+    iconCode.includes("04")
+  )
     return <WiCloud size={60} className="text-gray-300 mx-auto" />;
   if (iconCode.includes("13"))
     return <WiSnow size={60} className="text-cyan-300 mx-auto" />;
@@ -53,6 +58,12 @@ function Forecast({ forecast }) {
             <p className="font-bold text-lg">
               {Math.round(day.temp)}°C
             </p>
+
+            {/* 🌧 Rain Chance */}
+            <div className="flex items-center justify-center gap-1 mt-2 text-sm text-blue-200">
+              <WiRain size={22} />
+              <span>{day.rainChance}%</span>
+            </div>
           </div>
         ))}
       </div>
