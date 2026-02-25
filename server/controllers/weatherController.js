@@ -4,7 +4,8 @@ const cache = require("../utils/cache");
 const apiKey = process.env.OPENWEATHER_API_KEY;
 
 /* =============================
-   CURRENT WEATHER + UV + RAIN
+   CURRENT WEATHER + HOURLY + RAIN
+   (FREE TIER SAFE)
 ============================= */
 
 const getWeatherByCity = async (req, res) => {
@@ -19,7 +20,7 @@ const getWeatherByCity = async (req, res) => {
     const cachedData = cache.get(cacheKey);
     if (cachedData) return res.json(cachedData);
 
-    // 1️⃣ Get current weather (for lat/lon)
+    // 1️⃣ Current Weather
     const weatherResponse = await axios.get(
       "https://api.openweathermap.org/data/2.5/weather",
       {
@@ -31,23 +32,20 @@ const getWeatherByCity = async (req, res) => {
       }
     );
 
-    const weatherData = weatherResponse.data;
-    const { lat, lon } = weatherData.coord;
-
-    // 2️⃣ Get One Call data (UV + hourly)
-    const oneCallResponse = await axios.get(
-      "https://api.openweathermap.org/data/3.0/onecall",
+    // 2️⃣ Forecast (for hourly + rain chance)
+    const forecastResponse = await axios.get(
+      "https://api.openweathermap.org/data/2.5/forecast",
       {
         params: {
-          lat,
-          lon,
+          q: city,
           appid: apiKey,
           units: "metric",
         },
       }
     );
 
-    const oneCallData = oneCallResponse.data;
+    const weatherData = weatherResponse.data;
+    const forecastList = forecastResponse.data.list;
 
     const formattedData = {
       city: weatherData.name,
@@ -59,23 +57,19 @@ const getWeatherByCity = async (req, res) => {
       description: weatherData.weather[0].description,
       icon: weatherData.weather[0].icon,
 
-      // 🌧 Rain chance (next 3 hours average)
-      rainChance:
-        oneCallData.hourly[0]?.pop
-          ? Math.round(oneCallData.hourly[0].pop * 100)
-          : 0,
+      // 🌧 Rain chance (next 3 hours from forecast)
+      rainChance: forecastList[0]?.pop
+        ? Math.round(forecastList[0].pop * 100)
+        : 0,
 
-      // ☀️ UV Index
-      uvIndex: oneCallData.current.uvi,
-
-      // 🕒 Hourly forecast (next 8 hours)
-      hourly: oneCallData.hourly.slice(0, 8).map((hour) => ({
-        time: new Date(hour.dt * 1000).toLocaleTimeString("en-US", {
+      // 🕒 Hourly forecast (next 8 entries = 24 hours, 3hr interval)
+      hourly: forecastList.slice(0, 8).map((item) => ({
+        time: new Date(item.dt * 1000).toLocaleTimeString("en-US", {
           hour: "numeric",
         }),
-        temp: hour.temp,
-        icon: hour.weather[0].icon,
-        rainChance: Math.round(hour.pop * 100),
+        temp: item.main.temp,
+        icon: item.weather[0].icon,
+        rainChance: Math.round(item.pop * 100),
       })),
     };
 

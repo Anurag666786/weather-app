@@ -6,7 +6,6 @@ import {
   WiSnow,
   WiFog,
   WiThunderstorm,
-  WiDaySunnyOvercast,
 } from "react-icons/wi";
 
 function getWeatherIcon(description = "") {
@@ -25,7 +24,7 @@ function getWeatherIcon(description = "") {
   if (desc.includes("haze") || desc.includes("mist") || desc.includes("fog"))
     return <WiFog size={100} className="text-gray-400 mx-auto" />;
 
-  return <WiDaySunnyOvercast size={100} className="text-yellow-400 mx-auto" />;
+  return <WiDaySunny size={100} className="text-yellow-400 mx-auto" />;
 }
 
 function WeatherCard({ data }) {
@@ -56,7 +55,7 @@ function WeatherCard({ data }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mt-8 text-center">
+      <div className="grid grid-cols-3 gap-4 mt-8 text-center">
         <div>
           <p className="text-gray-300 text-sm">Humidity</p>
           <p className="text-lg font-semibold">{data.humidity}%</p>
@@ -68,13 +67,8 @@ function WeatherCard({ data }) {
         </div>
 
         <div>
-          <p className="text-gray-300 text-sm">Rain Chance</p>
+          <p className="text-gray-300 text-sm">Rain</p>
           <p className="text-lg font-semibold">{data.rainChance}%</p>
-        </div>
-
-        <div>
-          <p className="text-gray-300 text-sm">UV Index</p>
-          <p className="text-lg font-semibold">{data.uvIndex}</p>
         </div>
       </div>
     </motion.div>
