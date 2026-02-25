@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import SearchBar from "../components/SearchBar";
 import WeatherCard from "../components/WeatherCard";
 import Forecast from "../components/Forecast";
+import HourlyForecast from "../components/HourlyForecast"; // ✅ ADDED
 import LoadingSkeleton from "../components/LoadingSkeleton";
 import { fetchWeather, fetchForecast } from "../services/api";
 
@@ -47,6 +48,11 @@ function Home() {
         )}
 
         {!loading && weather && <WeatherCard data={weather} />}
+
+        {/* ✅ HOURLY FORECAST ADDED HERE */}
+        {!loading && weather?.hourly && (
+          <HourlyForecast hourly={weather.hourly} />
+        )}
 
         {!loading && forecast && <Forecast forecast={forecast} />}
       </div>
