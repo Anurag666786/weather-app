@@ -4,7 +4,7 @@ const cache = require("../utils/cache");
 const apiKey = process.env.OPENWEATHER_API_KEY;
 
 /* =============================
-   CURRENT WEATHER
+   CURRENT WEATHER + UV + RAIN
 ============================= */
 
 const getWeatherByCity = async (req, res) => {
@@ -17,12 +17,10 @@ const getWeatherByCity = async (req, res) => {
 
     const cacheKey = `weather_${city.toLowerCase()}`;
     const cachedData = cache.get(cacheKey);
+    if (cachedData) return res.json(cachedData);
 
-    if (cachedData) {
-      return res.json(cachedData);
-    }
-
-    const response = await axios.get(
+    // 1️⃣ Get current weather (for lat/lon)
+    const weatherResponse = await axios.get(
       "https://api.openweathermap.org/data/2.5/weather",
       {
         params: {
@@ -33,27 +31,59 @@ const getWeatherByCity = async (req, res) => {
       }
     );
 
-    const data = response.data;
+    const weatherData = weatherResponse.data;
+    const { lat, lon } = weatherData.coord;
+
+    // 2️⃣ Get One Call data (UV + hourly)
+    const oneCallResponse = await axios.get(
+      "https://api.openweathermap.org/data/3.0/onecall",
+      {
+        params: {
+          lat,
+          lon,
+          appid: apiKey,
+          units: "metric",
+        },
+      }
+    );
+
+    const oneCallData = oneCallResponse.data;
 
     const formattedData = {
-      city: data.name,
-      country: data.sys.country,
-      temperature: data.main.temp,
-      feelsLike: data.main.feels_like,
-      humidity: data.main.humidity,
-      windSpeed: data.wind.speed,
-      description: data.weather[0].description,
-      icon: data.weather[0].icon,
+      city: weatherData.name,
+      country: weatherData.sys.country,
+      temperature: weatherData.main.temp,
+      feelsLike: weatherData.main.feels_like,
+      humidity: weatherData.main.humidity,
+      windSpeed: weatherData.wind.speed,
+      description: weatherData.weather[0].description,
+      icon: weatherData.weather[0].icon,
+
+      // 🌧 Rain chance (next 3 hours average)
+      rainChance:
+        oneCallData.hourly[0]?.pop
+          ? Math.round(oneCallData.hourly[0].pop * 100)
+          : 0,
+
+      // ☀️ UV Index
+      uvIndex: oneCallData.current.uvi,
+
+      // 🕒 Hourly forecast (next 8 hours)
+      hourly: oneCallData.hourly.slice(0, 8).map((hour) => ({
+        time: new Date(hour.dt * 1000).toLocaleTimeString("en-US", {
+          hour: "numeric",
+        }),
+        temp: hour.temp,
+        icon: hour.weather[0].icon,
+        rainChance: Math.round(hour.pop * 100),
+      })),
     };
 
     cache.set(cacheKey, formattedData, 600);
 
     res.json(formattedData);
   } catch (error) {
-    if (error.response && error.response.status === 404) {
-      return res.status(404).json({ message: "City not found" });
-    }
-
+    console.error(error.response?.data || error.message);
     res.status(500).json({ message: "Server Error" });
   }
 };
@@ -72,10 +102,7 @@ const getForecastByCity = async (req, res) => {
 
     const cacheKey = `forecast_${city.toLowerCase()}`;
     const cachedData = cache.get(cacheKey);
-
-    if (cachedData) {
-      return res.json(cachedData);
-    }
+    if (cachedData) return res.json(cachedData);
 
     const response = await axios.get(
       "https://api.openweathermap.org/data/2.5/forecast",
@@ -99,7 +126,7 @@ const getForecastByCity = async (req, res) => {
         }),
         temp: item.main.temp,
         icon: item.weather[0].icon,
-        rainChance: Math.round(item.pop * 100), // 🌧 Added
+        rainChance: Math.round(item.pop * 100),
       }));
 
     cache.set(cacheKey, dailyForecast, 600);
